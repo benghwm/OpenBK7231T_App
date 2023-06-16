@@ -221,15 +221,16 @@ void DRV_I2C_AddDevice_TC74_Internal(int busType,int address, int targetChannel)
 	DRV_I2C_AddNextDevice((i2cDevice_t*)dev);
 }
 
-void DRV_I2C_AddDevice_Generic_Internal(int busType,int address, int targetChannel) {
-	i2cDevice_TC74_t *dev;
+void DRV_I2C_AddDevice_Generic_Internal(int busType,int address, int targetChannel, int numBytes) {
+	i2cDevice_Generic_t *dev;
 
-	dev = malloc(sizeof(i2cDevice_TC74_t));
+	dev = malloc(sizeof(i2cDevice_Generic_t));
 
 	dev->base.addr = address;
 	dev->base.busType = busType;
 	dev->base.type = I2CDEV_GENERIC;
 	dev->base.next = 0;
+	dev->base.numBytes = numBytes;
 	dev->targetChannel = targetChannel;
 
 	DRV_I2C_AddNextDevice((i2cDevice_t*)dev);
@@ -244,6 +245,7 @@ commandResult_t DRV_I2C_AddDevice_Generic(const void *context, const char *cmd, 
 	i2cModuleStr = Tokenizer_GetArg(0);
 	address = Tokenizer_GetArgInteger(1);
 	targetChannel = Tokenizer_GetArgInteger(2);
+	numBytes = Tokenizer_GetArgInteger(3);
 
 	busType = DRV_I2C_ParseBusType(i2cModuleStr);
 
@@ -254,7 +256,7 @@ commandResult_t DRV_I2C_AddDevice_Generic(const void *context, const char *cmd, 
 
 	addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_AddDevice_Generic: module %s, address %i, target %i\n", i2cModuleStr, address, targetChannel);
 
-	DRV_I2C_AddDevice_Generic_Internal(busType,address,targetChannel);
+	DRV_I2C_AddDevice_Generic_Internal(busType,address,targetChannel,numBytes);
 
 	return CMD_RES_OK;
 }
