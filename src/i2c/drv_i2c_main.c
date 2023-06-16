@@ -230,7 +230,7 @@ void DRV_I2C_AddDevice_Generic_Internal(int busType,int address, int targetChann
 	dev->base.busType = busType;
 	dev->base.type = I2CDEV_GENERIC;
 	dev->base.next = 0;
-	dev->base.numBytes = numBytes;
+	dev->numBytes = numBytes;
 	dev->targetChannel = targetChannel;
 
 	DRV_I2C_AddNextDevice((i2cDevice_t*)dev);
