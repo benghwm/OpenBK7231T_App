@@ -239,6 +239,7 @@ commandResult_t DRV_I2C_AddDevice_Generic(const void *context, const char *cmd, 
 	const char *i2cModuleStr;
 	int address;
 	int targetChannel;
+	int numBytes;
 	i2cBusType_t busType;
 
 	Tokenizer_TokenizeString(args,0);
