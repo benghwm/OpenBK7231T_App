@@ -380,6 +380,50 @@ commandResult_t DRV_I2C_AddDevice_Generic(const void *context, const char *cmd, 
 
 	return CMD_RES_OK;
 }
+
+void DRV_I2C_AddDevice_CHT8305_Internal(int busType,int address, int targetChannelTemp, int targetChannelHum) {
+	i2cDevice_CHT8305_t *dev;
+
+	dev = malloc(sizeof(i2cDevice_CHT8305_t));
+
+	dev->base.addr = address;
+	dev->base.busType = busType;
+	dev->base.type = I2CDEV_CHT8305;
+	dev->base.next = 0;
+	dev->targetChannelTemp = targetChannelTemp;
+	dev->targetChannelHum = targetChannelHum;
+
+	DRV_I2C_AddNextDevice((i2cDevice_t*)dev);
+}
+
+commandResult_t DRV_I2C_AddDevice_CHT8305(const void *context, const char *cmd, const char *args, int cmdFlags) {
+	const char *i2cModuleStr;
+	int address;
+	int targetChannelTemp;
+	int targetChannelHum;
+	i2cBusType_t busType;
+
+	Tokenizer_TokenizeString(args,0);
+	i2cModuleStr = Tokenizer_GetArg(0);
+	address = Tokenizer_GetArgInteger(1);
+	targetChannelTemp = Tokenizer_GetArgInteger(2);
+	targetChannelHum = Tokenizer_GetArgInteger(3);
+
+	busType = DRV_I2C_ParseBusType(i2cModuleStr);
+
+	if(DRV_I2C_FindDevice(busType,address)) {
+		addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_AddDevice_CHT8305: there is already some device on this bus with such addr\n");
+		return CMD_RES_BAD_ARGUMENT;
+	}
+
+	addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_AddDevice_CHT8305: module %s, address %i, target %i\n", i2cModuleStr, address, targetChannel);
+
+	DRV_I2C_AddDevice_TC74_Internal(busType,address,targetChannelTemp,targetChannelHum);
+
+	return CMD_RES_OK;
+}
+
+
 commandResult_t DRV_I2C_AddDevice_TC74(const void *context, const char *cmd, const char *args, int cmdFlags) {
 	const char *i2cModuleStr;
 	int address;
@@ -514,8 +558,11 @@ void DRV_I2C_Init()
 
 	CMD_RegisterCommand("I2C_WriteBytes", DRV_I2C_CMD_WriteBytes, NULL);
 
+	CMD_RegisterCommand("addI2CDevice_CHT8305", DRV_I2C_AddDevice_CHT8305, NULL);
 
 	CMD_RegisterCommand("addI2CDevice_Generic", DRV_I2C_AddDevice_Generic, NULL);
+
+
 	//cmddetail:{"name":"addI2CDevice_TC74","args":"",
 	//cmddetail:"descr":"Adds a new I2C device - TC74",
 	//cmddetail:"fn":"DRV_I2C_AddDevice_TC74","file":"i2c/drv_i2c_main.c","requires":"",
@@ -557,6 +604,9 @@ void DRC_I2C_RunDevice(i2cDevice_t *dev)
 	case I2CDEV_TC74:
 		DRV_I2C_TC74_RunDevice(dev);
 		break;
+	case I2CDEV_CHT8305:
+		DRV_I2C_CHT8305_RunDevice(dev);
+		break;
 	case I2CDEV_MCP23017:
 		DRV_I2C_MCP23017_RunDevice(dev);
 		break;
@@ -585,11 +635,14 @@ void I2C_OnChannelChanged_Device(i2cDevice_t *dev, int channel, int iVal)
 {
 	switch(dev->type)
 	{
-		case I2CDEV_GENERIC:
+	case I2CDEV_GENERIC:
 		//not needed
 		break;
 	case I2CDEV_TC74:
 		// not needed
+		break;
+	case I2CDEV_CHT8305:
+		//not needed
 		break;
 	case I2CDEV_MCP23017:
 		DRV_I2C_MCP23017_OnChannelChanged(dev, channel, iVal);

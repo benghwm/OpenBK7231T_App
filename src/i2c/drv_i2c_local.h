@@ -8,6 +8,7 @@ enum i2cDeviceType_e {
 	I2CDEV_TC74,
 	I2CDEV_MCP23017,
 	I2CDEV_LCD_PCF8574,
+	I2CDEV_CHT8305,
 	I2CDEV_GENERIC
 };
 
@@ -31,6 +32,14 @@ typedef struct i2cDevice_TC74_s {
 	// Our channel index to save the result temp
 	int targetChannel;
 } i2cDevice_TC74_t;
+
+typedef struct i2cDevice_CHT8305_s {
+	i2cDevice_t base;
+	// private CHT8305 variables
+	// Our channel index to save the result temp
+	int targetChannelTemp;
+	int targetChannelHum;
+} i2cDevice_CHT8305_t;
 
 typedef struct i2cDevice_Generic_s {
 	i2cDevice_t base;
