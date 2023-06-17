@@ -90,12 +90,13 @@ void DRV_I2C_Read(byte addr, byte *data)
 #endif
 }
 
-void DRV_I2C_ReadBytes(byte addr, byte *data, int len)
+void DRV_I2C_ReadBytesAdv(byte addr, byte *data, int len, int waitusec)
 {
 	if (current_bus == I2C_BUS_SOFT) {
 		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
 		Soft_I2C_WriteByte(&g_softI2C, addr);
 		Soft_I2C_Stop(&g_softI2C);
+		usleep(wait);
 		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 1);
 		Soft_I2C_ReadBytes(&g_softI2C, data, len);
 		Soft_I2C_Stop(&g_softI2C);
@@ -105,6 +106,11 @@ void DRV_I2C_ReadBytes(byte addr, byte *data, int len)
     i2c_operater.op_addr = addr;
     ddev_read(i2c_hdl, (char*)data, 1, (UINT32)&i2c_operater);
 #endif*/
+}
+
+void DRV_I2C_ReadBytes(byte addr, byte *data, int len)
+{
+	return DRV_I2C_ReadBytesAdv( addr, data,  len,0)
 }
 
 int DRV_I2C_Begin(int dev_adr, int busID) {
@@ -258,6 +264,7 @@ commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, cons
 	int dev_adr;
 	int register_addr;
 	int numBytes;
+	int waittime;
 	i2cBusType_t busType;
 
 	Tokenizer_TokenizeString(args,0);
@@ -265,6 +272,7 @@ commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, cons
 	dev_adr = Tokenizer_GetArgInteger(1);
 	register_addr = Tokenizer_GetArgInteger(2);
 	numBytes = Tokenizer_GetArgInteger(3);
+	waittime = Tokenizer_GetArgInteger(4);
 
 	busType = DRV_I2C_ParseBusType(i2cModuleStr);
 
@@ -277,7 +285,7 @@ commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, cons
 
 	DRV_I2C_Begin(dev_adr,busType);
 	//DRV_I2C_Write(0,1);
-	DRV_I2C_ReadBytes(register_addr,buffer,numBytes);
+	DRV_I2C_ReadBytesAdv(register_addr,buffer,numBytes,waittime);
 	DRV_I2C_Close();
 
 	for (int i = 0; i<numBytes; i++)
