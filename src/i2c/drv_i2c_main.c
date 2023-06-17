@@ -49,22 +49,7 @@ void DRV_I2C_Write(byte addr, byte data)
 	return DRV_I2C_WriteAdv( addr,  data, true);
 }
 
-void DRV_I2C_Write(byte addr, byte data)
-{
-	if (current_bus == I2C_BUS_SOFT) {
-		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
-		Soft_I2C_WriteByte(&g_softI2C, addr);
-		Soft_I2C_Stop(&g_softI2C);
-		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
-		Soft_I2C_WriteByte(&g_softI2C, data);
-		Soft_I2C_Stop(&g_softI2C);
-		return;
-	}
-#if PLATFORM_BK7231T
-    i2c_operater.op_addr = addr;
-    ddev_write(i2c_hdl, (char*)&data, 1, (UINT32)&i2c_operater);
-#endif
-}
+
 void DRV_I2C_WriteBytesAdv(byte addr, byte *data, int len, bool senddevadragain) {
 	if (current_bus == I2C_BUS_SOFT) {
 		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) +0);
