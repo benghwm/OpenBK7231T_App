@@ -96,7 +96,7 @@ void DRV_I2C_ReadBytesAdv(byte addr, byte *data, int len, int waitusec)
 		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
 		Soft_I2C_WriteByte(&g_softI2C, addr);
 		Soft_I2C_Stop(&g_softI2C);
-		usleep(wait);
+		usleep(waitusec);
 		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 1);
 		Soft_I2C_ReadBytes(&g_softI2C, data, len);
 		Soft_I2C_Stop(&g_softI2C);
