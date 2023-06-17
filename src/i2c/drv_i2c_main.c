@@ -252,7 +252,7 @@ commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, cons
 
 	busType = DRV_I2C_ParseBusType(i2cModuleStr);
 
-	if(DRV_I2C_FindDevice(busType,address)) {
+	if(DRV_I2C_FindDevice(busType,dev_adr)) {
 		addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_CMD_ReadBytes: there is already some device on this bus with such addr\n");
 		return CMD_RES_BAD_ARGUMENT;
 	}
@@ -286,7 +286,7 @@ commandResult_t DRV_I2C_CMD_WriteByte(const void *context, const char *cmd, cons
 
 	busType = DRV_I2C_ParseBusType(i2cModuleStr);
 
-	if(DRV_I2C_FindDevice(busType,address)) {
+	if(DRV_I2C_FindDevice(busType,dev_adr)) {
 		addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_CMD_WriteByte: there is already some device on this bus with such addr\n");
 		return CMD_RES_BAD_ARGUMENT;
 	}
