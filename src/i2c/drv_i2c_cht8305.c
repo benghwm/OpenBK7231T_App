@@ -26,7 +26,6 @@ void DRV_I2C_CHT8305_readTemperatureHumidity(int dev_adr, int busID, int *temp, 
 void DRV_I2C_CHT8305_RunDevice(i2cDevice_t *dev)
 {
 	i2cDevice_CHT8305_t *cht8305;
-	byte temp;
 
 	cht8305 = (i2cDevice_CHT8305_t*)dev;
 
