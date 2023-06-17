@@ -237,7 +237,7 @@ void DRV_I2C_AddDevice_Generic_Internal(int busType,int address, int targetChann
 }
 
 
-commandResult_t DRV_I2C_ReadBytes(const void *context, const char *cmd, const char *args, int cmdFlags) {
+commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, const char *args, int cmdFlags) {
 	const char *i2cModuleStr;
 	int dev_adr;
 	int register_addr;
@@ -271,7 +271,7 @@ commandResult_t DRV_I2C_ReadBytes(const void *context, const char *cmd, const ch
 }
 
 
-commandResult_t DRV_I2C_WriteByte(const void *context, const char *cmd, const char *args, int cmdFlags) {
+commandResult_t DRV_I2C_CMD_WriteByte(const void *context, const char *cmd, const char *args, int cmdFlags) {
 	const char *i2cModuleStr;
 	int dev_adr;
 	int register_addr;
@@ -457,9 +457,9 @@ commandResult_t DRV_I2C_Scan(const void *context, const char *cmd, const char *a
 void DRV_I2C_Init()
 {
 
-	CMD_RegisterCommand("I2C_ReadBytes", DRV_I2C_ReadAddr, NULL);
+	CMD_RegisterCommand("I2C_ReadBytes", DRV_I2C_CMD_ReadBytes, NULL);
 
-	CMD_RegisterCommand("I2C_WriteByte", DRV_I2C_WriteAddr, NULL);
+	CMD_RegisterCommand("I2C_WriteByte", DRV_I2C_CMD_WriteByte, NULL);
 
 
 	CMD_RegisterCommand("addI2CDevice_Generic", DRV_I2C_AddDevice_Generic, NULL);
