@@ -8,6 +8,7 @@ enum i2cDeviceType_e {
 	I2CDEV_TC74,
 	I2CDEV_MCP23017,
 	I2CDEV_LCD_PCF8574,
+	I2CDEV_GENERIC
 };
 
 typedef enum i2cBusType_e {
@@ -30,6 +31,15 @@ typedef struct i2cDevice_TC74_s {
 	// Our channel index to save the result temp
 	int targetChannel;
 } i2cDevice_TC74_t;
+
+typedef struct i2cDevice_Generic_s {
+	i2cDevice_t base;
+	// private Generic variables
+	// Our channel index to save the result temp
+	int targetChannel;
+	int numBytes;
+} i2cDevice_Generic_t;
+
 
 // https://www.elektroda.pl/rtvforum/viewtopic.php?t=3880540&highlight=
 //typedef struct i2cDevice_SM2135_s {
