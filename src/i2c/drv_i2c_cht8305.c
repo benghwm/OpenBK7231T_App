@@ -31,7 +31,7 @@ void DRV_I2C_CHT8305_RunDevice(i2cDevice_t *dev)
 
 	int temp;
 	int humidity;
-	DRV_I2C_TC74_readTemperature(tc74->base.addr, tc74->base.busType, &temp, &humidity);
+	DRV_I2C_CHT8305_readTemperatureHumidity(tc74->base.addr, tc74->base.busType, &temp, &humidity);
 
 	CHANNEL_Set(cht8305->targetChannelTemp, temp, 0);
 	CHANNEL_Set(cht8305->targetChannelHum,  humidity, 0);
