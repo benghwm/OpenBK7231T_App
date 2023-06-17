@@ -10,17 +10,17 @@ void DRV_I2C_CHT8305_readTemperatureHumidity(int dev_adr, int busID, int *temp, 
 {
 	//addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_TC74_readTemperature: called for addr %i\n", dev_adr);
 	// I2C_ReadBytes Soft 0x40 0x00 4 20000
-
+	
 	byte buffer[4];
 
 	DRV_I2C_Begin(dev_adr,busID);
 	DRV_I2C_ReadBytesAdv(0x40,buffer,4,20000);
 	DRV_I2C_Close();
 
-	&temp = (int)(1650.*(buffer[0]*256. + buffer[1]*1.)/65535.)-40;
-	&humidity = (int)(1000.*(buffer[0]*256. + buffer[1]*1.)/65535.);
+	*temp = (int)(1650.*(buffer[0]*256. + buffer[1]*1.)/65535.)-40;
+	*humidity = (int)(1000.*(buffer[0]*256. + buffer[1]*1.)/65535.);
 
-	addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"CHT8305 reads (%i %i; %i %i) - Temp: %d, Humidity %d", buffer[0],buffer[1],buffer[2],buffer[3], &temp*0.1, &humidity*0.1);
+	addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"CHT8305 reads (%i %i; %i %i) - Temp: %d, Humidity %d", buffer[0],buffer[1],buffer[2],buffer[3], (*temp)*0.1, (*humidity)*0.1);
 
 }
 void DRV_I2C_CHT8305_RunDevice(i2cDevice_t *dev)
