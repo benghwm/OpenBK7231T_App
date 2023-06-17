@@ -301,7 +301,6 @@ commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, cons
 	return CMD_RES_OK;
 }
 
-
 commandResult_t DRV_I2C_CMD_WriteByte(const void *context, const char *cmd, const char *args, int cmdFlags) {
 	const char *i2cModuleStr;
 	int dev_adr;
@@ -324,6 +323,39 @@ commandResult_t DRV_I2C_CMD_WriteByte(const void *context, const char *cmd, cons
 
 	DRV_I2C_Begin(dev_adr,busType);
 	DRV_I2C_Write(register_addr,content);
+	DRV_I2C_Close();
+
+	return CMD_RES_OK;
+}
+
+commandResult_t DRV_I2C_CMD_WriteBytes(const void *context, const char *cmd, const char *args, int cmdFlags) {
+	const char *i2cModuleStr;
+	int dev_adr;
+	int register_addr;
+	int len;
+	i2cBusType_t busType;
+
+	Tokenizer_TokenizeString(args,0);
+	i2cModuleStr = Tokenizer_GetArg(0);
+	dev_adr = Tokenizer_GetArgInteger(1);
+	register_addr = Tokenizer_GetArgInteger(2);
+	len = Tokenizer_GetArgInteger(3);
+	if (len > 20)
+		return;
+
+	byte *data = malloc(len*sizeof(byte));
+	for (int i = 0; i<len; i++)
+		data[i] = Tokenizer_GetArgInteger(4+i);
+
+	busType = DRV_I2C_ParseBusType(i2cModuleStr);
+
+	if(DRV_I2C_FindDevice(busType,dev_adr)) {
+		addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_CMD_WriteByte: there is already some device on this bus with such addr\n");
+		return CMD_RES_BAD_ARGUMENT;
+	}
+
+	DRV_I2C_Begin(dev_adr,busType);
+	DRV_I2C_WriteBytesAdv(register_addr, data, len, false);
 	DRV_I2C_Close();
 
 	return CMD_RES_OK;
@@ -486,6 +518,8 @@ void DRV_I2C_Init()
 	CMD_RegisterCommand("I2C_ReadBytes", DRV_I2C_CMD_ReadBytes, NULL);
 
 	CMD_RegisterCommand("I2C_WriteByte", DRV_I2C_CMD_WriteByte, NULL);
+
+	CMD_RegisterCommand("I2C_WriteBytes", DRV_I2C_CMD_WriteByte, NULL);
 
 
 	CMD_RegisterCommand("addI2CDevice_Generic", DRV_I2C_AddDevice_Generic, NULL);
