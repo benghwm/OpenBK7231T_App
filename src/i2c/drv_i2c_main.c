@@ -110,7 +110,7 @@ void DRV_I2C_ReadBytesAdv(byte addr, byte *data, int len, int waitusec)
 
 void DRV_I2C_ReadBytes(byte addr, byte *data, int len)
 {
-	return DRV_I2C_ReadBytesAdv( addr, data,  len,0)
+	return DRV_I2C_ReadBytesAdv( addr, data,  len,0);
 }
 
 int DRV_I2C_Begin(int dev_adr, int busID) {
