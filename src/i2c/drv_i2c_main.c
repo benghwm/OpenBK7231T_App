@@ -504,7 +504,7 @@ void DRV_I2C_Init()
 
 	CMD_RegisterCommand("I2C_WriteByte", DRV_I2C_CMD_WriteByte, NULL);
 
-	CMD_RegisterCommand("I2C_WriteBytes", DRV_I2C_CMD_WriteByte, NULL);
+	CMD_RegisterCommand("I2C_WriteBytes", DRV_I2C_CMD_WriteBytes, NULL);
 
 
 	CMD_RegisterCommand("addI2CDevice_Generic", DRV_I2C_AddDevice_Generic, NULL);
