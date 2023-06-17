@@ -416,9 +416,9 @@ commandResult_t DRV_I2C_AddDevice_CHT8305(const void *context, const char *cmd, 
 		return CMD_RES_BAD_ARGUMENT;
 	}
 
-	addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_AddDevice_CHT8305: module %s, address %i, target %i\n", i2cModuleStr, address, targetChannel);
+	addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_AddDevice_CHT8305: module %s, address %i, targetTemp %i, targetHum %i\n", i2cModuleStr, address, targetChannelTemp, targetChannelHum);
 
-	DRV_I2C_AddDevice_TC74_Internal(busType,address,targetChannelTemp,targetChannelHum);
+	DRV_I2C_AddDevice_CHT8305_Internal(busType,address,targetChannelTemp,targetChannelHum);
 
 	return CMD_RES_OK;
 }
