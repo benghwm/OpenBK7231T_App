@@ -275,7 +275,7 @@ commandResult_t DRV_I2C_CMD_WriteByte(const void *context, const char *cmd, cons
 	const char *i2cModuleStr;
 	int dev_adr;
 	int register_addr;
-	int numBytes;
+	int content;
 	i2cBusType_t busType;
 
 	Tokenizer_TokenizeString(args,0);
