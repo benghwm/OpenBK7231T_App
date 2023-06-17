@@ -24,6 +24,31 @@ static int current_bus;
 static int tg_addr;
 static softI2C_t g_softI2C;
 
+void DRV_I2C_WriteAdv(byte addr, byte data, bool senddevadragain)
+{
+	if (current_bus == I2C_BUS_SOFT) {
+		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
+		Soft_I2C_WriteByte(&g_softI2C, addr);
+		if (senddevadragain)
+		{
+			Soft_I2C_Stop(&g_softI2C);
+			Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
+		}
+		Soft_I2C_WriteByte(&g_softI2C, data);
+		Soft_I2C_Stop(&g_softI2C);
+		return;
+	}
+#if PLATFORM_BK7231T
+    i2c_operater.op_addr = addr;
+    ddev_write(i2c_hdl, (char*)&data, 1, (UINT32)&i2c_operater);
+#endif
+}
+
+void DRV_I2C_Write(byte addr, byte data)
+{
+	return DRV_I2C_WriteAdv( addr,  data, true);
+}
+
 void DRV_I2C_Write(byte addr, byte data)
 {
 	if (current_bus == I2C_BUS_SOFT) {
@@ -40,12 +65,15 @@ void DRV_I2C_Write(byte addr, byte data)
     ddev_write(i2c_hdl, (char*)&data, 1, (UINT32)&i2c_operater);
 #endif
 }
-void DRV_I2C_WriteBytes(byte addr, byte *data, int len) {
+void DRV_I2C_WriteBytesAdv(byte addr, byte *data, int len, bool senddevadragain) {
 	if (current_bus == I2C_BUS_SOFT) {
 		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) +0);
 		Soft_I2C_WriteByte(&g_softI2C, addr);
-		Soft_I2C_Stop(&g_softI2C);
-		Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
+		if (senddevadragain)
+		{
+			Soft_I2C_Stop(&g_softI2C);
+			Soft_I2C_Start(&g_softI2C, (tg_addr << 1) + 0);
+		}
 		for (int i = 0; i < len; i++) {
 			Soft_I2C_WriteByte(&g_softI2C, data[i]);
 		}
@@ -56,6 +84,9 @@ void DRV_I2C_WriteBytes(byte addr, byte *data, int len) {
     i2c_operater.op_addr = addr;
     ddev_write(i2c_hdl, (char*)data, len, (UINT32)&i2c_operater);
 #endif
+}
+void DRV_I2C_WriteBytes(byte addr, byte *data, int len) {
+	return DRV_I2C_WriteBytesAdv(addr, data, len, true);
 }
 void DRV_I2C_Read(byte addr, byte *data)
 {
@@ -264,7 +295,7 @@ commandResult_t DRV_I2C_CMD_ReadBytes(const void *context, const char *cmd, cons
 	DRV_I2C_ReadBytes(register_addr,buffer,numBytes);
 	DRV_I2C_Close();
 
-	for (int i = 0; i<4; i++)
+	for (int i = 0; i<numBytes; i++)
 		addLogAdv(LOG_INFO, LOG_FEATURE_I2C,"DRV_I2C_CMD_ReadBytes [%i]: %i", i, buffer[i]);
 
 	return CMD_RES_OK;
